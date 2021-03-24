@@ -1,0 +1,153 @@
+\section{Simulation} \label{sec:simulation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Standard Measurements
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Standard Measurements}
+
+In order to provide a relatively fair comparison between leg topologies, all designs share the same robot mass, torso height, walking speed, and link densities. ANYmal was used as a reference for all but the last of these values \cite{hutter_anymal_2016}. All robots have a torso mass of 30kg and a torso height of 0.35m. The torso height was found by taking the link lengths of ANYmal and finding the torso height for a configuration where the upper and lower links are separated by $90^{\circ}$ and the foot is found under the hip flexion/extension actuator, as shown in Figure \ref{fig:torso_height}. The robots move at a walking speed of $0.3\frac{m}{s}$, which is equal to the static walking speed of ANYmal. Links are composed of tubes of aluminium 6061 with a density of $2700\frac{kg}{m^3}$, with outer diameter $d_o=0.0440m$ and inner diameter $d_i=0.0408m$. Finally, the robots use HEBI Robotics X8-16 actuators as a stand-in for ANYdrives with peak torques of $38Nm$ and masses of $0.49kg$ \cite{hebi_robotics_x-series_nodate}.
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.5\textwidth]{5/5_torso_height.png}
+    \caption{Simple calculation to determine reference robot torso height}
+    \label{fig:torso_height}
+\end{figure}
+
+While Cost of Transportation tends to be inversely proportionate to the velocity of the robot, safe operation around humans is a higher priority than energy efficiency for the application defined in Section \ref{sec:app-metrics}, and thus a static walking gait was selected instead of trotting or bounding \cite{bledt_mit_2018}\cite{hutter_toward_2014}. The simple static walking gait developed by Hutter et al. was selected for this thesis as it is statically stable and simple to implement \cite{hutter_toward_2014}.
+
+In order to simplify the analysis, each topology is treated as a robotic arm, where the foot is considered as the robot end-effector. The ground contact forces resulting from the robot weight are then represented as a load applied to the end-effector. To simulate these configurations, the robot body is considered fixed to the inertial reference frame and the robot foot is constrained to move in a deterministic trajectory selected to maintain the constant torso velocity of $0.3\frac{m}{s}$. This is synonymous to a person running on a treadmill.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Jansen linkage simulation procedure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Jansen Linkage Simulation Procedure}
+
+First, the Jansen linkage based leg topology was run through a full cycle, from $\theta_0=0^{\circ}$ to $\theta_0=360^{\circ}$. The points at which the foot makes contact with the ground $x_{contact}$ at $\theta_{0_{contact}}$ and lifts off the ground $x_{liftoff}$ at $\theta_{0_{liftoff}}$ were recorded. The total stride length $d_s$ is given by
+
+\begin{equation}
+    d_s = x_{contact} - x_{liftoff}
+\end{equation}
+
+Each leg is in contact with the ground for three quarters of the total leg cycle \cite{hutter_toward_2014}. Therefore the total distance traversed per cycle is given by
+
+\begin{equation}
+    d_c = d_s \times \frac{4}{3}
+\end{equation}
+
+Since the robots walk at a speed of $0.3\frac{m}{s}$, the time to complete a cycle is given by
+
+\begin{equation}
+    t_c = \frac{d_c}{0.3}
+\end{equation}
+
+where three quarters of the time is spent in the contact phase (foot in contact with the ground) and a quarter is spent in the flight phase (foot not in contact with the ground).
+
+The simulation was run in the following manner. For a certain number of time steps of size $t_{step}$ between $t = 0$ and $t = t_c$:
+
+\begin{enumerate}
+    \item Calculate the current actuator angle for time step $k$ as $\theta_{0_k} = \theta_{0_{k-1}} + \dot{\theta}_{gf} t_{step}$, where $\dot{\theta}_{gf}$ is either $\dot{\theta}_{0_{stance}}$ or $\dot{\theta}_{0_{flight}}$, depending on whether the leg is in stance or flight phase
+    \item Using the four bar linkage equations from (\ref{eq:4-four-bar-linkage-first}) to (\ref{eq:4-four-bar-linkage-last}), find the position of each node along the base $x$ and $y$. The foot positions $x_5$ and $y_5$ were also used for the 2-DoF series-articulated leg topology
+    \item Create a polynomial fit for the position of each node with respect to time using the simulation data \cite{harris_array_2020}
+    \item Derive the polynomial node positions with respect to time twice in order to obtain the expression of each node acceleration in $x$ and $y$ with respect to time.
+    \item Calculate the actuator torque at each time step as expressed by (\ref{eq:jansen_reaction_torque}) using the reaction equations expressed by (\ref{eq:jansen_reaction_5}) through (\ref{eq:jansen_reaction_torque})
+\end{enumerate}
+
+Step 4 was done to avoid small denominator division; while the node velocities and accelerations could be calculated using
+
+\begin{align} \label{eq:small_denom}
+    \dot{x}_k &= \frac{x_k - x_{k-1}}{t_{step}}
+    \\
+    \ddot{x}_k &= \frac{\dot{x}_k - \dot{x}_{k-1}}{t_{step}}
+\end{align}
+
+, a small time step results in accelerations on the order of $10^6 \frac{m}{s}$, whereas deriving a symbolic representation of the node positions results in realistic values.
+
+\subsubsection{Polynomial Fit}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/5/x5_jump.png}
+    \caption[Instantaneous position change due to polynomial fit being applied at a per-cycle level.]{Instantaneous position change due to polynomial fit being applied at a per-cycle level. The black line indicates the transition from one leg cycle to the next and coincides with the spike, further amplified after deriving for the node velocity and acceleration}
+    \label{fig:5_x5_jump}
+\end{figure}
+
+In both Figures \ref{fig:5_comparison_torques} and \ref{fig:5_comparison_work} of the comparison, the Jansen mechanism exhibits large spikes. These are due to the manner in which the node accelerations are determined; the polynomial function used to approximate each position was fit to a single leg cycle; between cycles, there is an near-instantaneous jump between of node position due to the approximations not beginning and ending at the same position, demonstrated in Figure \ref{fig:5_x5_jump}. When derived to obtain the node velocity and acceleration, this instantaneous jump is amplified, resulting in the large spikes. As these spikes are virtually instantaneous, however, they perform limited damage when measuring power consumption. Additionally, the actual position curve as shown in Figure \ref{fig:5_x5_jump} is smooth, and thus the true acceleration would be near zero and the leg would not experience a torque spike.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  2-dof series-articulated simulation procedure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{2-DoF Series-Articulated Simulation Procedure}
+
+First, the foot position data and time step data calculated by the Jansen linkage were imported. The simulation was performed in two passes. The first uses the inverse kinematic equations to calculate the joint positions $\theta_1$ and $\theta_2$ at each time step. In order to avoid small denominator division as per (\ref{eq:small_denom}), a polynomial approximation for the joint angles $\theta_1$ and $\theta_2$ was developed and derived twice to obtain the angular velocities and angular accelerations. The second pass calculates the joint torques $\tau_1$ and $\tau_2$ at each time step using the dynamic equation from (\ref{eq:euler-lagrange}).
+
+\subsubsection{Polynomial Fit}
+
+The order of the polynomial approximation influences how well the equation fits the data, in this case joint position $\theta_1$ and $\theta_2$. A higher order polynomial approximation will fit the data better, as shown in Figure \ref{fig:5_2dof_angles_approx_7_15}, but will result in larger perturbations in derivative expressions, as shown in Figure \ref{fig:5_2dof_torques_approx_7_15}. A lower order polynomial will not fit the data as well, but will provide smoother derivative expressions. A polynomial approximation of 9th degree was chosen, as it was the highest order which did not experience large perturbations and exceed the $38Nm$ limit. The resulting joint torques are shown in the comparison section.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/5/2dof_angles_poly7poly15.png}
+    \caption{2-DoF series-articulated joint angles and polynomial approximations for 7th and 15th degree}
+    \label{fig:5_2dof_angles_approx_7_15}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/5/2dof_torques_poly7poly15.png}
+    \caption{2-DoF series-articulated joint torques for polynomial approximation of 7th and 15th degree}
+    \label{fig:5_2dof_torques_approx_7_15}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Comparison
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Comparison}
+
+Joint torques are given in figure \ref{fig:5_comparison_torques}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/5/5_comparison_torques.png}
+    \caption{Torques generated by each joint on Jansen linkage and 2-DoF series-articulated leg topologies}
+    \label{fig:5_comparison_torques}
+\end{figure}
+
+The mechanical work performed during step $k$ is equal to the dot product of the joint torques and joint displacements; the performed work is shown in Figure \ref{fig:5_comparison_work}.
+
+\begin{equation}
+W_k = \tau_k \cdot (\theta_{k} - \theta_{k-1})
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/5/5_comparison_work.png}
+    \caption{Work performed by each joint on Jansen linkage and 2-DoF series-articulated leg topologies}
+    \label{fig:5_comparison_work}
+\end{figure}
+
+The average mechanical power expended is calculated as
+
+\begin{equation}
+    P_{mechanical} = \frac{\sum_{k=0}^n W_k}{t_{total}}
+\end{equation}
+
+where the work is summed over all $n$ time steps of the simulation and divided by the total simulation time $t_{total}$.
+
+As described above, the Jansen linkage leg topology exhibits large torque spikes when the leg transitions from one leg cycle to the next as there is an instantaneous position jump. While the true torque during these spikes could be approximated as the torques before and after the spike, a more conservative approach is taken. From Patnaik's work, it can be noted that the largest experienced torque is less than two times the size of the second largest during a leg cycle. Double the largest torque, excluding the instantaneous peaks, was therefore selected for the calculation of $\phi$.
+
+The proprioceptive force sensitivity $\Pi$ as defined by (\ref{eq:proprioceptive-force-sensitivity}) only considers the leg Jacobian and external force $F$. This is equivalent to a static configuration with no gravity; for the Jansen linkage, all joint accelerations are set to zero. For the 2-DoF series-articulated leg the inertia, non-linear and gravitational terms are set to zero. The ground contact force is set to $140N$ for both leg topologies as it is the maximum external force experienced by the Jansen mechanism, and the force variation $\epsilon$ is set to $1N$. Both legs use the same foot position for the calculation of $\Pi$, as the proprioceptive force sensitivyt varies with respect to the Jacobian and thus the foot position. As the Jansen linkage was not modelled using the Jacobian method, Equations (\ref{eq:jansen_reaction_5}) through (\ref{eq:jansen_reaction_torque}) were used to determine $\Pi$.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+        \textbf{Metric} & \textbf{Jansen} & \textbf{2-DoF} \\
+        \hline
+        Power Consumption (W) & $4.2$ & $15.5$ \\
+        $\phi$ (Nm) & $9.0$ & $51.0$ \\
+        $\Pi$ (Nm) & $0.0185$ & $0.1929$
+    \end{tabular}
+    \caption{Performance metric results for Jansen linkage and 2-DoF series-articulated based leg topologies}
+    \label{tab:results}
+\end{table}
+

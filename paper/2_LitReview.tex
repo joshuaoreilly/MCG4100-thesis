@@ -1,0 +1,174 @@
+\section{Literature Review}
+
+In this section, the various leg topologies employed by legged robots will be examined, with a strong emphasis on four legged robots, also known as quadrupeds. The performance metrics used by researchers to evaluate the performance of their robots will be discussed. The motion of most legs found in legged robots are similar to anthropomorphic leg motions of abduction/adduction at the hip, and flexion/extension at the hip and knee; a point of distinction is that legged robots typically eschew an ankle joint and opt for a rounded tip for a foot. To facilitate reading, these motions will simply be referred to as abduction and flexion with the understanding that the joints can also perform adduction and extension.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% State of the Art
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quadruped Robots} \label{sub:stateofart}
+
+The MIT Cheetah 3, the design of which was first published in 2018, was developed for challenging terrain which would be difficult for a wheeled or tracked vehicle to navigate. It employs a commonly used leg topology; the "thigh" and "shin" linkages are connected serially from the hip to the foot \cite{bledt_mit_2018}. It uses three actuators; one for hip abduction, one for hip flexion, and one for knee flexion. The hip abduction actuator connects each leg to the chassis. The hip flexion actuator is connected directly after the former. The knee flexion actuator is mounted co-axially to the hip flexion actuator and rotates the knee joint using a roller chain. Placing all three actuators close to the center of mass reduces the leg inertia and allows for faster and more energy efficient maneuvers \cite{seok_design_2015}. A combination of high torque density actuators and 7.67:1 planetary gearboxes give the MIT Cheetah 3 high back-driveability and force transparency, which allows for high bandwidth force control through proprioception. The low gear ratio allows the robot to simulate compliant elements such as springs to reduce impact forces.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{2/2_mitcheetah3_litreview.png}
+    \caption[MIT Cheetah 3]{MIT Cheetah 3. The leg topology (right) is also used in ANYmal and Mini Cheetah \cite{bledt_mit_2018}}
+    \label{fig:mitcheetah3}
+\end{figure}
+
+ETH Zurich's ANYmal, the design of which was published in 2016, was developed for disaster relief and site inspection. It employs a similar leg topology to the MIT Cheetah 3, with an hip abduction actuator, hip flexion actuator and knee flexion actuator \cite{hutter_anymal_2016}. Whereas all actuators used in the MIT Cheetah 3 are placed in proximity to the chassis to reduce leg inertia, ANYmal places the knee actuator directly at the knee, while the two hip actuators are placed at the hip. This results in increased leg inertia, but facilitates maintenance and repairs. It employs series-elastic actuators at all three joints to enable force control and reduce impact forces, using physically compliant elements instead of the virtual compliance found in MIT Cheetah 3. It is also capable of rotating all joints $360^{\circ}$, compared to $330^{\circ}$ for MIT Cheetah 3s knee joint.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{2/2_anymal.png}
+    \caption[ANYmal]{ANYmal quadruped \cite{hutter_anymal_2016}}
+    \label{fig:anymal}
+\end{figure}
+
+As with MIT Cheetah 3 and ANYmal, IITs HyQ2Max, which is presented as a research platform for future legged robot development, has two actuators at the hip for abduction and flexion, and an actuator for knee flexion \cite{semini_design_2017}. Instead of using electric motors, HyQ2Max uses hydraulic actuators, with rotary vane actuators for hip abduction and hip flexion, and a hydraulic cylinder with four-bar linkage for knee flexion. The servo-valves controlling rotary vane and cylinder actuation are stored in the torso alongside the system electronics, while the power supply is stored offboard \cite{semini_additive_2015}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{2/2_hyq2max.png}
+    \caption[IIT HyQ2Max]{IITs HyQ, MiniHyQ and HyQ2Max \cite{semini_design_2017}}
+    \label{fig:hyq2max}
+\end{figure}
+
+Oncilla, developed at l'École polytechnique fédérale de Lausanne and published in 2018 as an open-source quadruped capable of model and sensor free locomotion, follows the form of the aforementioned; again, two actuators are located proximally and are responsible for hip abduction, performed by an RC servo, and hip flexion, performed by a brushless motor \cite{sprowitz_oncilla_2018}. Unlike the previously described quadrupeds, Oncilla employs a passive element; the knee actuator is located proximally, similar to MIT Cheetah 3, and uses a wire to flex the leg, and parallel springs to extend the leg. This pantographic leg design resolves over-determined kinematic loops, and thus allows for reliable open-loop control. Two versions of the robot were tested; one with and one without the hip abduction RC servos. As with other quadrupeds employing this topology, Oncilla with the RC servo enabled is capable of performing various gaits such as trotting and pronking, as well as turning with a reasonable radius when hip abduction is enabled. With the RC servo disabled, Oncilla loses the ability to turn in place and its tightest turning radius more than doubles. This is likely done using a shuffling motion as observed in the equally constrained Stanford Doggo, similar to vehicles with treads where each side operates at a different speed to turn \cite{leung_stanford_2019}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{2/2_oncilla_litreview.png}
+    \caption[Oncilla]{Oncilla quadruped. The pentographic leg design is demonstrated on the right. One actuator (1) controls hip flexion, another (2) controls knee flexion via a wire, which compresses the gravity compensating leg spring (3). \cite{sprowitz_oncilla_2018}}
+    \label{fig:oncilla}
+\end{figure}
+
+GOAT was designed by Simon Kalouche in an effort to improve upon the perceived shortcoming of robots such as MIT Cheetah and Boston Dynamics Spot \cite{kalouche_design_2016}. In both the compared quadrupeds, a single actuator per leg is dedicated to movement outside the robot's sagittal plane (used for hip abduction) whereas the two others are constrained to movement in the sagittal plane (used for hip flexion and knee flexion). As a result, the majority of their power is constrained to the sagittal plane, and thus they are more prone to failure due to large out-of-plane forces, as well as not being able to adequately turn and reorient in narrow spaces. The GOAT topology places all three actuators at the hip, separated evenly by $120^{\circ}$. This gives the leg an even force profile in all directions, allowing for truly omnidirectional movement. The actuators are equipped with single-stage 1:7 planetary gearbox, similar to the MIT Cheetah 3, and also employs virtual compliance and force control via proprioception. This research was constrained to the leg design, and thus no full quadruped was constructed or tested.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{2/2_goat.png}
+    \caption[GOAT (Gearless Omni-directional Acceleration-vectoring Topology)]{GOAT (Gearless Omni-directional Acceleration-vectoring Topology) \cite{kalouche_design_2016}}
+    \label{fig:goat}
+\end{figure}
+
+\subsubsection{Low Cost Quadrupeds}
+
+Quadruped robots tend to be expensive; Boston Dynamic's Spot is now available via the Spot Explorer Kit for \$74,500.00 \cite{noauthor_boston_nodate}. As such, many newer robots are designed with the express purpose of reducing the cost of these systems to allow for easier access and prototyping, as well as reduce the risk associated with exploring new control methods \cite{kau_stanford_2019}\cite{katz_mini_2019}.
+
+The Mini Cheetah strays the least from form to reduce the cost of these systems \cite{katz_mini_2019}. Designed to enable rapid development of  control systems for legged robots by reducing the cost of system damage, it employs an very similar leg topology and actuation strategy to the MIT Cheetah 3, but is scaled down in size and uses actuators originally designed for drones, as these are generally mass manufactured at very low cost. The per-actuator cost is approximately \$300, bringing the cost of all 12 actuators to approximately \$3600. The total cost of the robot is approximately \$5000 to \$6000\footnote{Total approximate cost obtained from email communication with author}; the actuators alone account for between 60\% and 72\% of the total cost of the robot, without considering the cost of motor drivers and encoders.
+
+The Stanford Doggo uses a parallel linkage leg topologies; two actuators are placed at the hip; each rotates one of two sets of linkages which connect distally at the foot, effectively allowing for control of the leg angle from hip to foot and the leg flexion \cite{kau_stanford_2019}. This is functionally similar to the two actuators used for hip flexion and knee flexion found in the quadrupeds presented above. This design, while excellent for maximizing vertical jumping height, does not allow for hip abduction, and thus has a limited capacity for turning, similar to Oncilla with the abduction actuator removed. Additionally, parallel linkages lead to lost geometric power \cite{hubicki_atrias_2016}. Stanford Doggo was designed with cost reduction and accessibility in mind; the total cost of the robot is less than \$3000, with the actuators, motor drivers and encoders accounting for 42\% of this cost.
+
+Solo, much like Mini Cheetah, is designed in order to reduce the cost of developing and maintaining a quadruped robot, and thus allow for wide-spread adoption and experimentation \cite{grimminger_open_2020}. Much like the MIT Cheetah 3, ANYmal and HyQ2Max, Solos leg linkages are connected serially. It has two actuators per leg: one for hip flexion and one for knee flexion, similar to the Stanford Doggo, Solo does not have a third actuator for hip abduction, and thus has significantly restricted mobility outside of the sagittal plane in contrast to the quadrupeds with three actuators per leg.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{2/2_minicheetah_doggo_solo.png}
+    \caption[Mini Cheetah, Stanford Doggo and Solo]{From left to right: Mini Cheetah \cite{katz_mini_2019}, Stanford Doggo \cite{kau_stanford_2019}, Solo \cite{grimminger_open_2020}}
+    \label{fig:low-cost-quads}
+\end{figure}
+
+\subsubsection{Planar Mechanisms} \label{ssubsec:planarmechs}
+
+Planar mechanisms are those whose movement is restricted to a single plane. Two commonly used mechanisms include the Jansen linkage and Klann linkage \cite{nansai_dynamic_2013}\cite{martinez-garcia_dynamic_2019}. Both use a single actuator to move the foot in two-dimensional space following a deterministic foot trajectory as shown in Figure \ref{fig:4_jansen-mechanism-patnaik}. While the number and length of links vary by linkage and individual implementation, they share common weaknesses: since the foot can only follow a predetermined trajectory, leg mobility and control is limited. The Jansen linkage is composed of eight links per leg while the Klann linkage uses six links per leg, in contrast to the other studied quadrupeds who typically use three links per leg; the additional joints serve as potential points of failure, while the lesser number of actuators remove other potential points of failure.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{2/2_planarmechanisms.png}
+    \caption[Klann and Jansen Linkages]{Left: Hexapod robot with Klann-mechanism legs. One actuator is responsible for locomotion of the left legs, one for the locomotion of the right legs, and a third for steering, allowing the hexapod to turn despite having a planar leg mechanism \cite{martinez-garcia_dynamic_2019}. Right: Jansen linkage \cite{zsj_horsepower_2016}}
+    \label{fig:planar-mech}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Categorization of Leg Topologies
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Categorization of Leg Topologies} \label{subsec:categories}
+
+Quadrupeds were organized into five categories based on the number of degrees of freedom (DoF) and the manner in which the leg linkages were configured, similar to as done in \cite{kalouche_design_2016}: 3-DoF series-articulated, 3-DoF parallel-articulated, 2-DoF series-articulated, 2-DoF parallel-articulated, and 1-DoF planar. These are illustrated in Figure \ref{fig:topology_categories}.
+
+3-DoF series-articulated topologies include an actuator for hip abduction, a second actuator for hip flexion and a third actuator for knee flexion. The placement of the actuators may vary by robot; MIT Cheetah 3 places the knee actuator coaxially to the hip flexion actuator and turns the knee using a pulley; this method reduces the inertia of the leg \cite{bledt_mit_2018}. Oncilla also places the knee actuator close to the hip and uses a pulley to flex the lower linkage and a pair of springs to extend it \cite{sprowitz_oncilla_2018}. ANYmal, in contrast, places the knee actuator at the knee and the second hip flexion actuator along the output axis of the hip adduction/adduction actuator instead of radially \cite{hutter_anymal_2016}. 
+
+3-DoF parallel-articulated topologies use a parallel mechanism reminiscent of delta robots to control actuation in 3D space. GOAT is the sole studied quadruped implementing this topology; all three actuators are placed at the hip and connect to the foot via three linkages separated by $120^{\circ}$ \cite{kalouche_design_2016}. This topology, while offering a symmetric force envelope within its workspace, suffers from inherent antagonistic forces due to its parallel nature \cite{hubicki_atrias_2016}. 
+
+2-DoF series-articulated topologies have serially connected linkages from the hip to the foot and is found in Solo \cite{grimminger_open_2020}. 2-DoF parallel-articulated topologies employ a pair of opposing linkages which connect at the foot and are found in Stanford Doggo and Minitaur \cite{kau_stanford_2019}\cite{kenneally_design_2016}.
+
+While both 2-DoF series-articulated and 2-DoF parallel-articulated topologies use two actuators for hip flexion and knee flexion and lack a third to allow movement outside the leg's sagittal ($X Z$) plane, the 2-DoF parallel-articulated topology suffers from internal antagonistic forces like the 3-DoF parallel-articulated topology \cite{hubicki_atrias_2016}. Figure \ref{fig:topology_categories} shows both actuators side by side for illustrative purposes; both Stanford Doggo and Minitaur place the actuators coaxially at the hip.
+
+1-DoF planar mechanisms are those who use a single actuator to manipulate the leg in the sagittal plane. This is achieved by using complex mechanisms such as the Jansen linkage or Klann linkage to produce a predetermined two-dimensional foot trajectory \cite{nansai_dynamic_2013}\cite{martinez-garcia_dynamic_2019}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{2/2_topology_categories.png}
+    \caption[Leg Topology Categories]{Leg topologies from left to right: 3-DoF series-articulated, 3-DoF parallel-articulated, 2-DoF series-articulated, 2-DoF parallel-articulated, 1D-planar. Joints with "A"s indicate actuators. Red joints and red actuators indicate that they are anchored to the rest of torso of the robot. For the 1D planar topology, the green and blue lines indicate a continuous link to which a rotary joint is fixed.}
+    \label{fig:topology_categories}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Performance Metrics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Performance Metrics} \label{subsec:performancemetrics}
+
+Performance metrics do not appear to by standardized for legged robots and thus vary by quadruped. While HyQ2Max focuses on qualitative measures such as the ability to perform maneuvers like climb stairs, self-right and trot, Stanford Doggo emphasizes empirical metrics such as jumping agility and steady velocity. Below is a summary of empirical metrics used by various quadrupeds and their pertinence to the beachfront litter collection application defined in Section \ref{sec:app-metrics}.
+
+Cost of Transportation (CoT) is the most commonly used metric and is defined as the ratio between the electric input and mechanical output power
+
+\begin{equation}
+    \text{CoT} = \frac{P}{mgv}
+\end{equation}
+
+where $P$ is the electric power consumption, $m$ is the mass of the robot, $g$ is the gravitational constant and $v$ is the linear velocity of the robot \cite{tucker_energetic_1970}. This metric is used by the MIT Cheetah 3, ANYmal, Oncilla and Stanford Doggo as a measure of locomotion efficiency; a lower CoT is indicative of longer service time when running on battery power. While Cost of Transportation is perhaps the most common way of measuring quadruped performance, it requires a fully developed robot: the electric power consumption and linear velocity vary with the chosen gait, such as trotting or pronking, as well as the gait algorithm used \cite{bledt_mit_2018}. On the other hand, measuring the CoT of a a single leg in the form of a monopod hopper isn't representative of the system, as monopods inherently require a dynamic gait to move, whereas a low-velocity, high-stability quadruped would use a static walking gait. Since developing fully body gait algorithms for either a full quadruped or a single-leg robot is outside the scope of this thesis, the Cost of Transportation will be computed by an adapted means defined in Section \ref{sec:app-metrics}.
+
+MIT Cheetah 3 uses the force-to-body-weight ratio as an indicator of performance for high speed locomotion, jumping, carrying loads, and recovering from extreme disturbances \cite{bledt_mit_2018}. It is measured as 
+
+\begin{equation} \label{eq:force-body-weight}
+    \phi = \frac{F_{vertical}}{mg}
+\end{equation}
+
+where $F_{vertical}$ is the vertical force a single leg can exert and $mg$ is the gravitational force of the robot.
+
+Solo's authors measured the number of leg lengths the robot can jump vertically, while Stanford Doggo's authors measured the absolute peak vertical jumping height and vertical jumping agility, equal to
+
+\begin{equation} \label{eq:jump_agility}
+    \alpha = \frac{h}{t}
+\end{equation}
+
+where $h$ is the peak vertical jumping height and $t$ is the combined time in stance and to apogee \cite{grimminger_open_2020}\cite{kau_stanford_2019}. These, along with force-to-body-weight ratio, measure the ability of the quadruped to perform dynamic maneuvers such as climbing and navigating harsh terrain. Peak jumping height $h$ and vertical jumping agility $\alpha$ are suitable for robots performing highly dynamic maneuvers, but are not relevant for robots operating more slowly \cite{kau_stanford_2019}. They prioritize high per-leg output torque to maximize velocity as an optimization output, whereas the design developed in this thesis should minimize the required actuator output torque for a given, capped velocity.
+
+Grimminger et al. additionally rate the dimensionless stiffness of the robot, measured as
+
+\begin{equation}
+    \Tilde{k} = \frac{k l_0}{mg}
+\end{equation}
+
+where $k$ is the stiffness of the leg which can be simulated using impedance control, $l_0$ is the leg length and $mg$ is gravitational force of the robot. This metric is indicative of the impedance control capabilities of the robot, which allows the robot to regulate leg stiffness on the fly. A large dimensionless stiffness can also be seen as a measure of the robot's ability to perform dynamic maneuvers requiring high output torque such as jumping and sprinting. Finally, it is applicable when high external forces are applied to the quadruped. If a large impact force is applied from above, such as a child jumping on the robot, a high dimensionless stiffness will allow the robot to catch itself before impacting the ground. If a force is applied from the side, such as being pushed, then a higher dimensionless stiffness will allow the robot to recover without falling over (in reality, the work-space/range-of-motion of the leg likely influences the ability to absorb lateral forces). There is a cap to the useful dimensionless stiffness, that being when mechanical components begin failing. Given the simulation methodology presented in Section \ref{sec:simulation}, this metric is not applicable.
+
+Two versions of Oncilla were designed; one with hip abduction and one without. As such, turning capability was measured using the time in seconds for a compete $360^{\circ}$ turn, the radius of the turn in meters, and the loss of speed while turning compared to moving in a straight line \cite{sprowitz_oncilla_2018}. The version without hip abduction was not able to turn on the spot and had a turning radius twice as wide and was unable to turn on the spot, suggesting poor performance when navigating in narrow environments or performing dynamic maneuvers outside the sagittal plane.
+
+GOAT was constrained to a leg design instead of the full quadruped and as such, it does not share performance metrics such as CoT, which require a fully developed quadruped with estimations of masses and programmed gaits, but rather uses metrics which can be applied in isolation to a single leg \cite{kalouche_design_2016}. Four custom metrics were used to evaluate leg agility for both the GOAT topology as well as other commonly used leg designs. The first is the energy delivered by leg thrust $E$.
+
+\begin{equation}
+    E       = F_{avg} (d_{foot})_{max}
+\end{equation}
+
+$F_{avg}$ is the average foot force along a foot trajectory and $(d_{foot})_{max}$ is the maximum distance traveled by the foot along a linear force and position trajectory. Energy delivered by leg thrust $E$ is counter-intuitive for this robot, as minimizing the output torque for a given velocity is moreso the objective than maximizing the output force \cite{kalouche_design_2016}. The force envelope volume $\Psi$ measures the force which can be exerted over the entire leg work-space and is expressed as
+
+\begin{equation} \label{eq:force-envelope-volume}
+    \Psi    = F_{avg} \cdot V
+\end{equation}
+
+where $V$ is the work-space volume. The limb acceleration $\Lambda$ is mathematically identical to force-to-body-weight as expressed in (\ref{eq:force-body-weight}) with the exception of the gravitational constant on the denominator
+
+\begin{equation}
+    \Lambda = \frac{F_{avg}}{m_l}
+\end{equation}
+
+where $m_l$ is the unpsrung leg mass. The proprioceptive force sensitivity ($\Pi$) measures the minimum joint torque resolution required to measure a change in foot force from $f$ to $f+\epsilon$ for $n$ leg actuators.
+
+\begin{equation} \label{eq:proprioceptive-force-sensitivity}
+    \Pi     = \frac{1}{n}\sum_{i=1}^n \lvert J_i^T F(f) - J_i^T F(f + \epsilon) \rvert
+\end{equation}
+
+While the first three metrics evaluate the dynamic capabilities of the leg, either for a given position or over the entire leg workspace, the fourth measures how well the robot can perform proprioceptive force control; the smaller the minimal joint torque resolution required, the more accurately the leg can perform force control.
+
+HyQ2Max's authors detailed pass-fail metrics that the robot should satisfy \cite{semini_design_2017}. These include: walking trot on rough terrain at $0.5\frac{m}{s}$; walking trot on flat ground at $1.5\frac{m}{s}$; walking trot with turning at $0.5\frac{m}{s}$ with $25\frac{^{\circ}}{s}$; push recovery from lateral perturbation of $500N$; crawling on flat ground at $0.1\frac{m}{s}$; stair climbing with height of $0.12m$ and step depth $0.3m$; and self-righting using a predefined motion. These values were taken from Semini et al.'s previous research.

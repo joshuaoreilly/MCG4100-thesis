@@ -1,0 +1,31 @@
+\section{Application and Performance Metrics} \label{sec:app-metrics}
+
+\subsection{Application and Design Criteria}
+
+Performance metrics vary by robot since each one is designed with a different use-case in mind. MIT Cheetah 3 excels at highly dynamic maneuvers. ANYmal is designed for site inspection and search and rescue and as such, places robustness and reliability over agility. Solo is intended as a low-cost entry point to legged robot research and thus values cost, modularity and ease of assembly/maintenance.
+The topology developed in this thesis is designed for a robot performing litter collection in a beachfront environment. Such a robot should meet the following criteria, which will assist in determining the performance metrics by which a topology will be selected and optimized.
+
+\begin{enumerate}
+    \item Able to navigate on mildly unstructured but not overly hostile terrain such as sand, grass, gravel and pavement
+    \item Robust enough to take impact forces, and be resistant to water and salt ingress
+    \item Able to turn and move at a maximum velocity that is safe for operation near humans
+    \item Able to operate for a reasonable period of time on battery or solar power
+\end{enumerate}
+
+Some candidate design criteria have been rejected for practical purposes. First, the desired angle of incline for operation, since it requires full quadruped analysis to determine the stability of the robot when operating on a slope. Second, the ability to self-right, as this capability is difficult to measure without a full robot model. While the ability of the feet to reach up to the torso is a convincing proxy for self-righting, more difficult to analyse scenarios, such as beginning upside down, are more involving to determine \cite{semini_design_2015}. Turning capabilities are neglected since determining the turning radius or velocity would require similarly involving analysis. Considering that beaches which are not densely crowded with obstructions tend to have a large amount of open space, and that even quadrupeds with their legs constrained to the sagittal plane such as Oncilla can turn within $0.5m$, this capability is generalized to the ability to turn using out of the sagittal plane \cite{sprowitz_oncilla_2018}. Finally, the cost of the robot is considered in order to improve accessibility, although in an informal manner as the cost of specific actuators, materials and electronics, as well as cost of maintenance, cannot adequately be determined within the scope of this thesis.
+
+\subsection{Performance Metric Selection}
+
+The mechanical power $P_{mechanical}$ of each topology is used as a proxy for Cost of Transportation. This is consistent with the setup described in Section \ref{sec:modelling}, where all topologies operate at the same constant chassis velocity and share the same chassis mass, rendering the denominator terms redundant. The lower the mechanical power, the more energy efficient the robot will be while operating.
+
+Force-to-body-weight ratio as defined in  (\ref{eq:force-body-weight}) can be interpreted as the quadruped's capacity to carry a larger payload for a given robot mass. Since cost-reduction takes precedence over carrying capacity or maximum force output, this metric is reformulated as
+
+\begin{equation} \label{eq:max_torque}
+    \phi = \sum_i \tau_{i_{max}}
+\end{equation}
+
+where $\tau_{i_{max}}$ is the maximum actuator torque of actuator $i$. The lower the value of $\phi$, the smaller (and more economical) the actuators which can be used and the less the robot will weigh. This form has the shortcoming of neglecting how the cost of an actuator varies as a function of the output torque; if the relation is non-linear, this approximation becomes less accurate.
+
+The force envelope volume $\Psi$ as defined by (\ref{eq:force-envelope-volume}) is useful for determining how well the leg can handle foot forces which are applied when in different location in the work-space; for a given maximum actuator torque, and thus foot force, maximizing this value indicates the ability to handle larger applied forces in its work-space. As an extension, work-space volume $V$ is an equally a useful metric, as it correlates with how versatile the performed motions can be \cite{semini_design_2015}. Higher versatility allows for recovery from larger disturbances since the legs can extend to further positions to counter the applied force. Together, these give an indicator of the robot's ability to turn rapidly and recover from disturbances.
+
+Finally, the proprioceptive force sensitivity $\Pi$ as defined by (\ref{eq:proprioceptive-force-sensitivity}) will be used to measure the force-control capabilities of each topology.

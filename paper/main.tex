@@ -1,0 +1,64 @@
+\documentclass[letterpaper,12pt,onecolumn,titlepage]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=1.5in,right=1in,top=1in,bottom=1in,headheight=15pt]{geometry}    % Margins
+\usepackage{graphicx}                                           % Image processing
+    \graphicspath{{./images/}}
+\usepackage{xcolor}             % For highlighting text
+\usepackage{amsmath}                                            % \text{}. etc
+\usepackage{amsfonts}           % For R^3 symbols, etc.
+\usepackage{notoccite}          % To ignore citation numbers in table of figures, etc.
+\usepackage{parskip}            % No indenting paragraphs
+\usepackage{setspace}           % For smart 1 1/2 spacing
+    \onehalfspacing
+\usepackage{verbatim}           % for commenting out
+\usepackage{fancyhdr}           % for page numbers in top right
+\usepackage{setspace}           % for 1 1/2 spacing
+    \onehalfspacing
+\usepackage{hyperref}           % for links in ToC
+    
+\renewcommand*\contentsname{Table of Contents} % faculty wants this name
+
+\begin{document}
+
+\include{01_TitlePage}
+
+\pagenumbering{gobble}
+
+\include{02_abstract}
+
+\pagenumbering{roman}
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+\pagenumbering{arabic}
+\pagestyle{fancy}
+    \fancyhead{} % clear default settings
+    \fancyfoot{} % clear default settings
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyhead[R]{\thepage}
+
+\include{1_Introduction}
+\include{2_LitReview}
+\include{3_ApplicationAndMetrics}
+\include{4_Modelling}
+\include{5_Simulation}
+\include{6_Discussion}
+\newpage
+
+\bibliographystyle{IEEEtran}
+\bibliography{references.bib}
+
+\newpage
+
+\fancyhead[R]{A}
+
+\appendix
+\include{_A}
+
+\end{document}
